@@ -105,7 +105,7 @@ if ! check_image "n8nio/n8n:latest"; then
     IMAGES_OK=false
 fi
 
-if ! check_image "evolutionapi/evolution-api:latest"; then
+if ! check_image "atendai/evolution-api:latest"; then
     IMAGES_OK=false
 fi
 
