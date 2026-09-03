@@ -101,11 +101,11 @@ echo "📦 Verificando se as imagens estão disponíveis..."
 
 IMAGES_OK=true
 
-if ! check_image "n8nio/n8n:latest"; then
+if ! check_image "n8nio/n8n:2.37.7"; then
     IMAGES_OK=false
 fi
 
-if ! check_image "atendai/evolution-api:latest"; then
+if ! check_image "evoapicloud/evolution-api:v2.3.7"; then
     IMAGES_OK=false
 fi
 

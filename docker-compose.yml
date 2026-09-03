@@ -10,6 +10,7 @@ services:
       POSTGRES_PASSWORD: n8n
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
     networks:
       - workshop-network
     healthcheck:
@@ -18,17 +19,9 @@ services:
       timeout: 5s
       retries: 10
 
-  redis:
-    image: redis:7-alpine
-    restart: unless-stopped
-    volumes:
-      - redis_data:/data
-    networks:
-      - workshop-network
-
   # n8n
   n8n:
-    image: n8nio/n8n:latest
+    image: n8nio/n8n:2.37.7
     restart: unless-stopped
     ports:
       - "5678:5678"
@@ -46,8 +39,6 @@ services:
       - NODE_OPTIONS=--max-old-space-size=2048
       - N8N_DISABLE_UI=false
       - N8N_CORS_ORIGIN=*
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
-      - N8N_DISABLE_PRODUCTION_MAIN_PROCESS=true
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=postgres
       - DB_POSTGRESDB_PORT=5432
@@ -75,7 +66,7 @@ services:
       - workshop-network
 
   evolution-api:
-    image: atendai/evolution-api:latest
+    image: evoapicloud/evolution-api:v2.3.7
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -86,20 +77,10 @@ services:
       - evolution_instances:/evolution/instances
       - evolution_store:/evolution/store
     depends_on:
-      - postgres-evolution
-      - redis-evolution
-    networks:
-      - workshop-network
-
-  postgres-evolution:
-    image: postgres:15
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: evolution
-      POSTGRES_USER: evolution
-      POSTGRES_PASSWORD: evolution
-    volumes:
-      - postgres_evolution_data:/var/lib/postgresql/data
+      postgres:
+        condition: service_healthy
+      redis-evolution:
+        condition: service_started
     networks:
       - workshop-network
 
@@ -111,22 +92,8 @@ services:
     networks:
       - workshop-network
 
-  evolution-manager:
-    image: atendai/evolution-manager:latest
-    restart: unless-stopped
-    ports:
-      - "8081:3000"
-    environment:
-      - NEXT_PUBLIC_EVOLUTION_API_URL=http://localhost:8080
-    depends_on:
-      - evolution-api
-    networks:
-      - workshop-network
-
 volumes:
   postgres_data:
-  postgres_evolution_data:
-  redis_data:
   redis_evolution_data:
   n8n_data:
   evolution_instances:

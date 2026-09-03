@@ -10,16 +10,13 @@
       "version": "18"
     }
   },
-  "forwardPorts": [5678, 8080, 8081, 5432],
+  "forwardPorts": [5678, 8080, 5432],
   "portsAttributes": {
     "5678": {
       "label": "N8N"
     },
     "8080": {
       "label": "EvolutionAPI"
-    },
-    "8081": {
-      "label": "EvolutionAPI Manager"
     },
     "5432": {
       "label": "PostgreSQL"
